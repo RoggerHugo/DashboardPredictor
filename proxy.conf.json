@@ -1,0 +1,14 @@
+{
+  "/api": {
+    "target": "https://dropoutpredictor.onrender.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/auth": {
+    "target": "https://dropoutpredictor.onrender.com",
+    "secure": true,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}
