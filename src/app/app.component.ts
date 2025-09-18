@@ -2,13 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
 import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, RouterModule], 
   template: `
     <div class="container">
       <h1>TesisIA - Sistema de Alumnos</h1>
@@ -53,16 +52,25 @@ export class AppComponent {
 
   login() {
     this.authService.login(this.username, this.password).subscribe({
-      next: (token) => {
-        // token ya es string, no es objeto
+      next: (res: any) => {
+        const token =
+          typeof res === 'string'
+            ? res
+            : res?.token ?? res?.accessToken ?? res?.jwt;
+
+        if (!token) {
+          console.error('No llegó token en la respuesta:', res);
+          alert('Login fallido: respuesta inválida');
+          return;
+        }
+
         localStorage.setItem('auth_token', token);
-        console.log('Token guardado en localStorage:', token);
-        this.isLoggedIn = true;
-        this.router.navigate(['/reporte']);
+        this.isLoggedIn = true;                 
+        this.router.navigate(['/reporte']);     
       },
       error: (err) => {
-        console.error('Login fallido', err);
-        alert('Login fallido. Revisa usuario/contraseña.');
+        console.error('Error login', err);
+        alert('Login fallido');
       },
     });
   }

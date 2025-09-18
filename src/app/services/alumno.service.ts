@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+// src/app/services/alumno.service.ts
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
@@ -15,17 +16,14 @@ export interface Alumno {
   creadoEn: string;
 }
 
-@Injectable({
-  providedIn: 'root',
-})
+@Injectable({ providedIn: 'root' })
 export class AlumnoService {
-  private baseUrl = '/api/student';
-
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+  private baseUrl = '/api-dropoutpredictor/api/student'; 
 
   /** Listar todos los alumnos */
   getAlumnos(): Observable<Alumno[]> {
-    return this.http.get<Alumno[]>(this.baseUrl);
+    return this.http.get<Alumno[]>(`${this.baseUrl}`);
   }
 
   /** Obtener detalle de un alumno por id */
@@ -45,6 +43,7 @@ export class AlumnoService {
 
   /** Activar o inactivar un alumno */
   activarInactivar(id: number, activo: boolean): Observable<void> {
+    // puedes mandar el flag por query param o body; depende de tu backend
     return this.http.put<void>(`${this.baseUrl}/${id}/activo?value=${activo}`, {});
   }
 }

@@ -2,12 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ReporteService, Alumno } from './reporte.service';
-import { HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-reporte',
   standalone: true,
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <h2>Reporte de Alumnos</h2>
 
@@ -66,11 +65,12 @@ export class ReporteComponent implements OnInit {
 
   constructor(private reporteService: ReporteService) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.reporteService.getAlumnos().subscribe({
       next: (data) => (this.alumnos = data),
       error: (err) => {
         console.error('Error al obtener alumnos', err);
+        this.alumnos = []; 
         alert('Error al obtener alumnos, revisa la consola.');
       },
     });
