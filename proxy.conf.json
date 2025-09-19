@@ -1,13 +1,13 @@
 {
   "/auth": {
     "target": "https://dropoutpredictor.onrender.com",
-    "secure": false,
+    "secure": true,
     "changeOrigin": true,
     "logLevel": "debug"
   },
   "/api": {
     "target": "https://dropoutpredictor.onrender.com",
-    "secure": false,
+    "secure": true,
     "changeOrigin": true,
     "logLevel": "debug"
   }
