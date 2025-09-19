@@ -1,71 +1,121 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/pages/alumnos/alumno-list/alumno-list.component.ts
+import { Component, OnInit, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { AlumnoService, Alumno } from '../../../services/alumno.service';
+import { RouterModule } from '@angular/router';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+
+import { AlumnoService } from '../../../services/alumno.service';
+import { Alumno } from '../../../models/alumno.model';
+import { AlumnoFormComponent } from '../alumno-form/alumno-form.component';
 
 @Component({
   selector: 'app-alumno-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, HttpClientModule],
-  template: `
-    <h2>Listado de Alumnos</h2>
-    <button routerLink="/alumnos/nuevo">Nuevo Alumno</button>
-
-    <table *ngIf="alumnos">
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Matrícula</th>
-          <th>Edad</th>
-          <th>Turno</th>
-          <th>Carrera</th>
-          <th>Estado Civil</th>
-          <th>Activo</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let a of alumnos">
-          <td>{{ a.nombreCompleto }}</td>
-          <td>{{ a.matricula }}</td>
-          <td>{{ a.edad }}</td>
-          <td>{{ a.turno }}</td>
-          <td>{{ a.carrera }}</td>
-          <td>{{ a.estadoCivil }}</td>
-          <td>{{ a.activo ? 'Sí' : 'No' }}</td>
-          <td>
-            <button [routerLink]="['/alumnos/editar', a.id]">Editar</button>
-            <button [routerLink]="['/alumnos/detalle', a.id]">Detalle</button>
-            <button (click)="toggleActivo(a)">{{ a.activo ? 'Inactivar' : 'Activar' }}</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div *ngIf="!alumnos">Cargando...</div>
-  `,
+  templateUrl: './alumno-list.component.html',
+  styleUrls: ['./alumno-list.component.scss'],
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    // Angular Material
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSelectModule
+  ]
 })
 export class AlumnoListComponent implements OnInit {
-  alumnos: Alumno[] | null = null;
+  private alumnoService = inject(AlumnoService);
+  private dialog = inject(MatDialog);
 
-  constructor(private alumnoService: AlumnoService, private router: Router) {}
+  displayedColumns: string[] = [
+    'id',
+    'nombreCompleto',
+    'matricula',
+    'fechaNacimiento',
+    'edad',
+    'estadoCivil',
+    'turno',
+    'carrera',
+    'activo',
+    'creadoEn',
+    'acciones'
+  ];
+
+  dataSource = new MatTableDataSource<Alumno>();
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   ngOnInit(): void {
     this.cargarAlumnos();
   }
 
-  cargarAlumnos() {
-    this.alumnoService.getAlumnos().subscribe({
-      next: (data) => (this.alumnos = data),
-      error: (err) => console.error('Error al cargar alumnos:', err),
+  cargarAlumnos(): void {
+    this.alumnoService.getAll().subscribe({
+      next: (data) => {
+        this.dataSource.data = data;
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+      error: (err) => {
+        console.error('Error al cargar alumnos', err);
+      }
     });
   }
 
-  toggleActivo(alumno: Alumno) {
-    this.alumnoService.activarInactivar(alumno.id, !alumno.activo).subscribe({
-      next: () => this.cargarAlumnos(),
-      error: (err) => console.error('Error al cambiar estado:', err),
+  aplicarFiltro(event: Event) {
+    const valor = (event.target as HTMLInputElement).value;
+    this.dataSource.filter = valor.trim().toLowerCase();
+  }
+
+  editarAlumno(alumno: Alumno) {
+    const dialogRef = this.dialog.open(AlumnoFormComponent, {
+      width: '600px',
+      data: alumno
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.cargarAlumnos();
+      }
     });
   }
+
+  eliminarAlumno(id: number) {
+    if (confirm('¿Estás seguro de eliminar este alumno?')) {
+      this.alumnoService.delete(id).subscribe({
+        next: () => this.cargarAlumnos(),
+        error: (err) => console.error('Error al eliminar alumno', err)
+      });
+    }
+  }
+
+  addAlumno(): void {
+    const dialogRef = this.dialog.open(AlumnoFormComponent, {
+      width: '500px',
+      data: null
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.cargarAlumnos();
+      }
+    });
+  }
+
 }

@@ -1,93 +1,65 @@
-import { Component, OnInit } from '@angular/core';
+// src/app/pages/alumnos/alumno-form/alumno-form.component.ts
+import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { RouterModule, ActivatedRoute, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
-import { AlumnoService, Alumno } from '../../../services/alumno.service';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
+import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
+import { Alumno } from '../../../models/alumno.model';
 
 @Component({
   selector: 'app-alumno-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, HttpClientModule],
-  template: `
-    <h2>{{ isEdit ? 'Editar Alumno' : 'Nuevo Alumno' }}</h2>
-    <form *ngIf="alumno" (ngSubmit)="guardar()">
-      <label>Nombre:</label>
-      <input [(ngModel)]="alumno.nombreCompleto" name="nombreCompleto" required /><br />
-
-      <label>Matrícula:</label>
-      <input [(ngModel)]="alumno.matricula" name="matricula" required /><br />
-
-      <label>Edad:</label>
-      <input [(ngModel)]="alumno.edad" name="edad" type="number" required /><br />
-
-      <label>Turno:</label>
-      <select [(ngModel)]="alumno.turno" name="turno" required>
-        <option *ngFor="let t of turnos" [value]="t">{{ t }}</option>
-      </select><br />
-
-      <label>Carrera:</label>
-      <select [(ngModel)]="alumno.carrera" name="carrera" required>
-        <option *ngFor="let c of carreras" [value]="c">{{ c }}</option>
-      </select><br />
-
-      <label>Estado Civil:</label>
-      <select [(ngModel)]="alumno.estadoCivil" name="estadoCivil" required>
-        <option *ngFor="let e of estadosCiviles" [value]="e">{{ e }}</option>
-      </select><br />
-
-      <label>Activo:</label>
-      <input type="checkbox" [(ngModel)]="alumno.activo" name="activo" /><br />
-
-      <button type="submit">Guardar</button>
-    </form>
-
-    <div *ngIf="!alumno">Cargando...</div>
-  `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatDialogModule
+  ],
+  templateUrl: './alumno-form.component.html',
+  styleUrls: ['./alumno-form.component.scss'],
 })
-export class AlumnoFormComponent implements OnInit {
-  alumno: Partial<Alumno> = { activo: true };
-  isEdit = false;
-  id: number | null = null;
-
-  // Tablas maestras internas
-  turnos = ['Matutino', 'Vespertino', 'Nocturno'];
-  carreras = [
-    'Ing. en Animación Digital y Efectos Visuales',
-    'Ing. en Sistemas',
-    'Ing. Industrial',
-  ];
-  estadosCiviles = ['Soltero', 'Casado', 'Divorciado', 'Viudo'];
+export class AlumnoFormComponent {
+  alumnoForm: FormGroup;
+  estadosCiviles = ESTADO_CIVIL;
+  turnos = TURNOS;
+  carreras = CARRERAS;
 
   constructor(
-    private alumnoService: AlumnoService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+    private fb: FormBuilder,
+    private dialogRef: MatDialogRef<AlumnoFormComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: Alumno | null
+  ) {
+    this.alumnoForm = this.fb.group({
+      id: [data?.id ?? null],
+      nombreCompleto: [data?.nombreCompleto ?? '', Validators.required],
+      matricula: [data?.matricula ?? '', Validators.required],
+      fechaNacimiento: [data?.fechaNacimiento ?? '', Validators.required],
+      edad: [data?.edad ?? null, Validators.required],
+      estadoCivil: [data?.estadoCivil ?? '', Validators.required],
+      turno: [data?.turno ?? '', Validators.required],
+      carrera: [data?.carrera ?? '', Validators.required],
+      activo: [data?.activo ?? false],
+      creadoEn: [data?.creadoEn ?? new Date().toISOString()],
+    });
+  }
 
-  ngOnInit(): void {
-    this.id = Number(this.route.snapshot.paramMap.get('id'));
-    this.isEdit = !!this.id;
-
-    if (this.isEdit && this.id) {
-      this.alumnoService.getAlumno(this.id).subscribe({
-        next: (data) => (this.alumno = data),
-        error: (err) => console.error('Error al cargar alumno:', err),
-      });
+  onSave() {
+    if (this.alumnoForm.valid) {
+      this.dialogRef.close(this.alumnoForm.value);
     }
   }
 
-  guardar() {
-    if (this.isEdit && this.id) {
-      this.alumnoService.actualizarAlumno(this.id, this.alumno).subscribe({
-        next: () => this.router.navigate(['/alumnos']),
-        error: (err) => console.error('Error al actualizar alumno:', err),
-      });
-    } else {
-      this.alumnoService.crearAlumno(this.alumno).subscribe({
-        next: () => this.router.navigate(['/alumnos']),
-        error: (err) => console.error('Error al crear alumno:', err),
-      });
-    }
+  onCancel() {
+    this.dialogRef.close();
   }
 }

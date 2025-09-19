@@ -1,16 +1,27 @@
-// src/app/core/auth.interceptor.ts
+// src/app/interceptors/auth.interceptor.ts
 import { HttpInterceptorFn } from '@angular/common/http';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  if (req.url.includes('/auth/login')) return next(req); // no adjuntar en login
+  // No adjuntar token al login
+  if (req.url.includes('/auth/login')) {
+    return next(req);
+  }
 
   const token = localStorage.getItem('auth_token');
+
   if (token) {
-    req = req.clone({ setHeaders: { Authorization: `Bearer ${token}` } });
-    // log temporal para confirmar:
-    console.log('[AUTH INT]', req.url, req.headers.get('Authorization'));
+    const cloned = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    // Log temporal para verificar que el token está viajando
+    console.log('[AUTH-INT] Token agregado a', req.url, cloned.headers.get('Authorization'));
+    return next(cloned);
   } else {
-    console.warn('[AUTH INT] sin token para', req.url);
+    console.warn('[AUTH-INT] No hay token en localStorage para', req.url);
   }
+
   return next(req);
 };

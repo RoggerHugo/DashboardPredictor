@@ -28,7 +28,7 @@ import { AuthService } from './services/auth.service';
 
       <!-- Contenido protegido -->
       <div *ngIf="isLoggedIn">
-        <button (click)="logout()">Cerrar sesión</button>
+        
         <router-outlet></router-outlet>
       </div>
     </div>

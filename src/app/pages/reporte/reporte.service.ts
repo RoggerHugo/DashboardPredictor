@@ -2,22 +2,17 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-
-export interface Alumno {
-  id: number;
-  nombreCompleto: string;
-  matricula: string;
-  edad: number;
-  turno: string;
-}
+import { Alumno } from '../../models/alumno.model'
 
 @Injectable({ providedIn: 'root' })
 export class ReporteService {
   private http = inject(HttpClient);
-  private base = '/api-dropoutpredictor/api/student';
+  //private apiUrl = '/api/student';
+  private apiUrl = 'https://dropoutpredictor.onrender.com/api/student';
 
   getAlumnos(): Observable<Alumno[]> {
-    return this.http.get<any>(this.base).pipe(
+   // return this.http.get<any>(this.base).pipe(
+    return this.http.get<any>(this.apiUrl).pipe(
       map((res) => {
         // 1) Si ya es array, devolver tal cual
         if (Array.isArray(res)) return res as Alumno[];

@@ -31,7 +31,7 @@ export class LoginComponent {
     this.authService.login(this.username, this.password).subscribe({
       next: (token) => {
         console.log('Token guardado:', token);
-        this.router.navigate(['/reporte']);
+        this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error('Error login', err);
