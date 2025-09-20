@@ -10,4 +10,6 @@ export interface Alumno {
   carrera: string;
   activo: boolean;
   creadoEn: string;
+
+  editando?:boolean;
 }

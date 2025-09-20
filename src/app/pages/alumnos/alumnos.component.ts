@@ -10,12 +10,6 @@ import { RouterModule } from '@angular/router';
     <div class="alumnos-shell">
       <header class="header">
         <h2>Gestión de Alumnos</h2>
-        <nav>
-          <a routerLink="/alumnos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            Listado
-          </a>
-          <a routerLink="/alumnos/nuevo" routerLinkActive="active">Nuevo</a>
-        </nav>
       </header>
 
       <section class="content">

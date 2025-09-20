@@ -21,6 +21,6 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const h1 = fixture.nativeElement.querySelector('h1');
-    expect(h1?.textContent).toContain('TesisIA - Sistema de Alumnos');
+    expect(h1?.textContent).toContain('Clasificador de riesgo de abandono académico');
   });
 });

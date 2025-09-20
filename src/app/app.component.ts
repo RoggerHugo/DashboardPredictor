@@ -10,7 +10,7 @@ import { AuthService } from './services/auth.service';
   imports: [CommonModule, FormsModule, RouterModule], 
   template: `
     <div class="container">
-      <h1>TesisIA - Sistema de Alumnos</h1>
+      <h1>Clasificador de riesgo de abandono académico </h1>
 
       <!-- Login -->
       <div *ngIf="!isLoggedIn">

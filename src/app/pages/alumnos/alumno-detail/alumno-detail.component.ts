@@ -1,14 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+//import { HttpClientModule } from '@angular/common/http';
 import { AlumnoService } from '../../../services/alumno.service';
 import { Alumno } from '../../../models/alumno.model';
 
 @Component({
   selector: 'app-alumno-detail',
   standalone: true,
-  imports: [CommonModule, RouterModule, HttpClientModule],
+  imports: [CommonModule, RouterModule],
   template: `
     <h2>Detalle de Alumno</h2>
     <div *ngIf="alumno">

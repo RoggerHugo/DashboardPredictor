@@ -1,1 +1,27 @@
-<p>alumnos works!</p>
+<table *ngIf="alumnos?.length; else cargando">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Nombre</th>
+      <th>Matrícula</th>
+      <th>Carrera</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let a of alumnos">
+      <td>{{ a.id }}</td>
+      <td>{{ a.nombreCompleto }}</td>
+      <td>{{ a.matricula }}</td>
+      <td>{{ a.carrera }}</td>
+      <td>
+        <button (click)="editar(a)">Editar</button>
+        <button (click)="eliminar(a.id)">Eliminar</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<ng-template #cargando>
+  <p>Cargando alumnos...</p>
+</ng-template>

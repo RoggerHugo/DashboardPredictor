@@ -1,1 +1,11 @@
-<p>alumno-detail works!</p>
+<h2 mat-dialog-title>Detalle del Alumno</h2>
+<mat-dialog-content>
+  <p><strong>ID:</strong> {{ data.id }}</p>
+  <p><strong>Nombre:</strong> {{ data.name }}</p>
+  <p><strong>Email:</strong> {{ data.email }}</p>
+  <p><strong>Edad:</strong> {{ data.age }}</p>
+  <!-- agrega los campos que devuelve tu API -->
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>
