@@ -38,7 +38,7 @@ export class ReporteService {
     );
   }
 
-  // 🔹 Nuevo método para obtener un alumno por su ID
+  // 🔹 Método para obtener un alumno por su ID
   getPrediccionByAlumno(id: number): Observable<Alumno> {
     return this.http.get<Alumno>(`${this.apiUrl}/${id}`).pipe(
       map((res: any) => {

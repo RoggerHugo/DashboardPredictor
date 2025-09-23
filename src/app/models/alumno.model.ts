@@ -5,8 +5,11 @@ export interface Alumno {
   matricula: string;
   fechaNacimiento: string;
   edad: number;
+  estadoCivilId: number;
   estadoCivil: string;
+  turnoId: number;
   turno: string;
+  carreraId: number;
   carrera: string;
   activo: boolean;
   creadoEn: string;

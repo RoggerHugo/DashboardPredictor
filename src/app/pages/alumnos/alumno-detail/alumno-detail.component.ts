@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute } from '@angular/router';
-//import { HttpClientModule } from '@angular/common/http';
 import { AlumnoService } from '../../../services/alumno.service';
 import { Alumno } from '../../../models/alumno.model';
+import { TURNOS, CARRERAS, ESTADO_CIVIL } from '../../../data/masters';
 
 @Component({
   selector: 'app-alumno-detail',
@@ -30,14 +30,10 @@ export class AlumnoDetailComponent implements OnInit {
   alumno: Alumno | null = null;
   id: number | null = null;
 
-  // Tablas maestras (en caso de necesitar referencia para mostrar nombres)
-  turnos = ['Matutino', 'Vespertino', 'Nocturno'];
-  carreras = [
-    'Ing. en Animación Digital y Efectos Visuales',
-    'Ing. en Sistemas',
-    'Ing. Industrial',
-  ];
-  estadosCiviles = ['Soltero', 'Casado', 'Divorciado', 'Viudo'];
+  // Asignar los datos importados a las propiedades del componente
+  turnos = TURNOS;
+  carreras = CARRERAS;
+  estadosCiviles = ESTADO_CIVIL;
 
   constructor(private alumnoService: AlumnoService, private route: ActivatedRoute) {}
 
@@ -47,9 +43,6 @@ export class AlumnoDetailComponent implements OnInit {
       this.alumnoService.getAlumno(this.id).subscribe({
         next: (data) => {
           this.alumno = data;
-
-          // Opcional: mapear IDs a nombres si fueran necesarios
-          // Ejemplo: this.alumno.turno = this.turnos[data.turnoId - 1];
         },
         error: (err) => console.error('Error al cargar detalle del alumno:', err),
       });

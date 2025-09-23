@@ -11,6 +11,6 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(withInterceptors([authInterceptor])),
     provideRouter(routes),
-    importProvidersFrom(BrowserAnimationsModule), // <--- Agregado
+    importProvidersFrom(BrowserAnimationsModule), 
   ],
 });

@@ -45,12 +45,35 @@ export class AlumnoService {
 
   // Crear alumno nuevo (POST)
   create(alumno: Alumno): Observable<Alumno> {
-    return this.http.post<Alumno>(this.apiUrl, alumno);
+    const payload = {
+      nombreCompleto: alumno.nombreCompleto,
+      matricula: alumno.matricula,
+      fechaNacimiento: alumno.fechaNacimiento,
+      edad: alumno.edad,
+      estadoCivilId: alumno.estadoCivilId,
+      turnoId: alumno.turnoId,
+      carreraId: alumno.carreraId,
+      activo: alumno.activo
+    };
+    return this.http.post<Alumno>(this.apiUrl, payload);
   }
 
   // Actualizar alumno existente (PUT)
   update(alumno: Alumno): Observable<Alumno> {
-    return this.http.put<Alumno>(`${this.apiUrl}/${alumno.id}`, alumno);
+    if (!alumno.id) {
+      throw new Error('El alumno debe tener un ID para actualizarse.');
+    }
+    const payload = {
+      nombreCompleto: alumno.nombreCompleto,
+      matricula: alumno.matricula,
+      fechaNacimiento: alumno.fechaNacimiento,
+      edad: alumno.edad,
+      estadoCivilId: alumno.estadoCivilId,
+      turnoId: alumno.turnoId,
+      carreraId: alumno.carreraId,
+      activo: alumno.activo
+    };
+    return this.http.put<Alumno>(`${this.apiUrl}/${alumno.id}`, payload);
   }
 
   // Inactivar alumno (PATCH activo=false)

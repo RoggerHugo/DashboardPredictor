@@ -1,7 +1,13 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule, MatSelectChange } from '@angular/material/select';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+
 import { AlumnoService } from '../../../services/alumno.service';
 import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
 import { Alumno } from '../../../models/alumno.model';
@@ -9,85 +15,108 @@ import { Alumno } from '../../../models/alumno.model';
 @Component({
   selector: 'app-alumno-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatDialogModule],
-  template: `
-    <h2>Nuevo Alumno</h2>
-
-    <form (ngSubmit)="guardar()">
-      <label>Nombre Completo:</label>
-      <input [(ngModel)]="alumno.nombreCompleto" name="nombreCompleto" required />
-
-      <label>Matrícula:</label>
-      <input [(ngModel)]="alumno.matricula" name="matricula" required />
-
-      <label>Fecha Nacimiento:</label>
-      <input type="date" [(ngModel)]="alumno.fechaNacimiento" name="fechaNacimiento" required />
-
-      <label>Edad:</label>
-      <input type="number" [(ngModel)]="alumno.edad" name="edad" required />
-
-      <label>Estado Civil:</label>
-      <select [(ngModel)]="alumno.estadoCivil" name="estadoCivil" required>
-        <option *ngFor="let e of estadoCivilList" [value]="e">{{ e }}</option>
-      </select>
-
-      <label>Turno:</label>
-      <select [(ngModel)]="alumno.turno" name="turno" required>
-        <option *ngFor="let t of turnoList" [value]="t">{{ t }}</option>
-      </select>
-
-      <label>Carrera:</label>
-      <select [(ngModel)]="alumno.carrera" name="carrera" required>
-        <option *ngFor="let c of carreraList" [value]="c">{{ c }}</option>
-      </select>
-
-      <label>Activo:</label>
-      <input type="checkbox" [(ngModel)]="alumno.activo" name="activo" />
-
-      <div class="acciones">
-        <button type="submit">Guardar</button>
-        <button type="button" (click)="cerrar()">Cancelar</button>
-      </div>
-    </form>
-  `,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatCheckboxModule,
+    MatButtonModule
+  ],
+  templateUrl: './alumno-form.component.html',
   styles: [`
-    form { display: flex; flex-direction: column; gap: 8px; }
-    label { font-weight: bold; }
-    .acciones { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+    .form-container {
+      position: relative;
+      z-index: 10;
+    }
+    .full-width {
+      width: 100%;
+    }
   `]
 })
-export class AlumnoFormComponent {
-  alumno: Alumno = {
-    id: 0,
-    nombreCompleto: '',
-    matricula: '',
-    fechaNacimiento: '',
-    edad: 0,
-    estadoCivil: '',
-    turno: '',
-    carrera: '',
-    activo: true,
-    creadoEn: new Date().toISOString(),
-  };
+export class AlumnoFormComponent implements OnInit {
+  
+  alumnoForm: FormGroup;
 
-  estadoCivilList = ESTADO_CIVIL;
-  turnoList = TURNOS;
-  carreraList = CARRERAS;
+  estadosCiviles = ESTADO_CIVIL;
+  turnos = TURNOS;
+  carreras = CARRERAS;
 
   constructor(
+    private fb: FormBuilder,
     private dialogRef: MatDialogRef<AlumnoFormComponent>,
     private alumnoService: AlumnoService,
-    @Inject(MAT_DIALOG_DATA) public data: any
-  ) {}
-
-  guardar(): void {
-    this.alumnoService.create(this.alumno).subscribe({
-      next: (nuevo) => this.dialogRef.close(nuevo),
-      error: (err) => console.error('Error al crear alumno', err),
+    @Inject(MAT_DIALOG_DATA) public data?: Alumno
+  ) {
+    this.alumnoForm = this.fb.group({
+      nombreCompleto: ['', Validators.required],
+      matricula: ['', Validators.required],
+      fechaNacimiento: ['', Validators.required],
+      edad: [null, [Validators.required, Validators.min(1)]],
+      estadoCivilId: [null, Validators.required],
+      turnoId: [null, Validators.required],
+      carreraId: [null, Validators.required],
+      activo: [true]
     });
   }
 
-  cerrar(): void {
+  ngOnInit(): void {
+   if (this.data) {
+    const estadoCivil = typeof this.data.estadoCivil === 'string'
+      ? this.estadosCiviles.find(e => e.nombre === this.data?.estadoCivil)?.id
+      : this.data.estadoCivil; // si ya es id
+
+    const turno = typeof this.data.turno === 'string'
+      ? this.turnos.find(t => t.nombre === this.data?.turno)?.id
+      : this.data.turno;
+
+    const carrera = typeof this.data.carrera === 'string'
+      ? this.carreras.find(c => c.nombre === this.data?.carrera)?.id
+      : this.data.carrera;
+
+    this.alumnoForm.patchValue({
+      ...this.data,
+      estadoCivilId: estadoCivil,
+      turnoId: turno,
+      carreraId: carrera
+    });
+    }
+  }
+
+  onSelectionChange(event: MatSelectChange, controlName: string): void {
+    console.log(`✅ Cambio en '${controlName}'. Nuevo valor: ${event.value}`);
+  }
+
+  onSave(): void {
+    if (this.alumnoForm.invalid) {
+      console.error('El formulario es inválido.');
+      this.alumnoForm.markAllAsTouched();
+      return;
+    }
+
+    const formValues = this.alumnoForm.value;
+
+    // 🚀 Solo incluimos el id del alumno (si existe) + valores del formulario
+    const alumnoParaGuardar: Alumno = {
+      id: this.data?.id, 
+      ...formValues
+    };
+
+    console.log('Payload final que se enviará a la API:', alumnoParaGuardar);
+
+    const request = this.data
+      ? this.alumnoService.update(alumnoParaGuardar)
+      : this.alumnoService.create(alumnoParaGuardar);
+
+    request.subscribe({
+      next: (res) => this.dialogRef.close(res),
+      error: (err) => console.error('Error al guardar alumno:', err),
+    });
+  }
+
+  onCancel(): void {
     this.dialogRef.close();
   }
 }

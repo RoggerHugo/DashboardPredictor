@@ -26,8 +26,8 @@
     <!-- Estado Civil -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Estado Civil</mat-label>
-      <mat-select formControlName="estadoCivil">
-        <mat-option *ngFor="let e of estadosCiviles" [value]="e.nombre">
+      <mat-select formControlName="estadoCivilId">
+        <mat-option *ngFor="let e of estadosCiviles" [value]="e.id">
           {{ e.nombre }}
         </mat-option>
       </mat-select>
@@ -36,8 +36,8 @@
     <!-- Turno -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Turno</mat-label>
-      <mat-select formControlName="turno">
-        <mat-option *ngFor="let t of turnos" [value]="t.nombre">
+      <mat-select formControlName="turnoId">
+        <mat-option *ngFor="let t of turnos" [value]="t.id">
           {{ t.nombre }}
         </mat-option>
       </mat-select>
@@ -46,14 +46,13 @@
     <!-- Carrera -->
     <mat-form-field appearance="outline" class="full-width">
       <mat-label>Carrera</mat-label>
-      <mat-select formControlName="carrera">
-        <mat-option *ngFor="let c of carreras" [value]="c.nombre">
+      <mat-select formControlName="carreraId">
+        <mat-option *ngFor="let c of carreras" [value]="c.id">
           {{ c.nombre }}
         </mat-option>
       </mat-select>
     </mat-form-field>
 
-    <!-- Activo -->
     <mat-checkbox formControlName="activo">Activo</mat-checkbox>
 
   </form>

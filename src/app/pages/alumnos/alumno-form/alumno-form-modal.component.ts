@@ -89,8 +89,11 @@ export class AlumnoFormModalComponent {
     matricula: '',
     fechaNacimiento: new Date().toISOString().split('T')[0], // yyyy-MM-dd
     edad: 18,
+    estadoCivilId:1,
     estadoCivil: this.estados.length ? this.estados[0].nombre : 'Soltero',
+    turnoId:1,
     turno: this.turnos.length ? this.turnos[0].nombre : 'Matutino',
+    carreraId:1,
     carrera: this.carreras.length ? this.carreras[0].nombre : 'Ing. de Sistemas',
     activo: true,
     creadoEn: new Date().toISOString()
@@ -104,7 +107,7 @@ export class AlumnoFormModalComponent {
   guardar() {
     // Si el objeto ya tiene id > 0, asumo actualización, sino creación
     if (this.alumno.id && this.alumno.id > 0) {
-      // usa el método update/create que tengas en tu servicio
+      //se usa el método update y create que existen en el servicio
       this.alumnoService.update(this.alumno).subscribe({
         next: () => this.dialogRef.close('ok'),
         error: (err) => {
