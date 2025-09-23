@@ -7,15 +7,10 @@ import { RouterModule } from '@angular/router';
   imports: [RouterModule],
   template: `
     <div class="home-container">
-      <!--
-      <h1>Clasificador de riesgo de abandono académico </h1>
-      <img src="LogoTeschi.jpeg" alt="Logo del sistema" class="logo" />
--->
       <nav class="home-nav">
         <a routerLink="/reporte" class="home-link">📊 Ver Reporte</a>
         <a routerLink="/alumnos" class="home-link">👨‍🎓 Gestión de Alumnos</a>
       </nav>
-
       <router-outlet></router-outlet>
     </div>
   `,

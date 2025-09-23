@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
 
 import { Alumno } from '../../../models/alumno.model';
@@ -15,7 +17,14 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
 @Component({
   selector: 'app-alumno-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, MatTableModule, MatButtonModule, MatIconModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    MatTableModule,
+    MatButtonModule,
+    MatIconModule,
+    MatPaginatorModule,
+  ],
   template: `
     <div class="acciones-superiores">
       <button mat-raised-button color="primary" (click)="abrirModalNuevo()">
@@ -23,7 +32,7 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
       </button>
     </div>
 
-    <table mat-table [dataSource]="alumnos" class="mat-elevation-z8 full-width">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width">
 
       <!-- ID -->
       <ng-container matColumnDef="id">
@@ -133,17 +142,32 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
       <tr mat-header-row *matHeaderRowDef="columnas"></tr>
       <tr mat-row *matRowDef="let row; columns: columnas;"></tr>
     </table>
+
+    <!-- Paginador -->
+    <mat-paginator [pageSizeOptions]="[7, 14, 21]" showFirstLastButtons></mat-paginator>
   `,
   styles: [`
     .full-width { width: 100%; margin-top: 16px; }
     .acciones-superiores { display: flex; justify-content: flex-end; margin-bottom: 12px; }
-    input, select { width: 100%; border: none; background: transparent; }
+    input, select { width: 100%; border: none; background: transparent; font-size: 13px; }
     input[readonly], select[disabled] { color: #444; background: transparent; }
     input:focus, select:focus { outline: 1px solid #1976d2; background: #eef6ff; }
+
+    /* Estilos */
+    ::ng-deep .mat-mdc-row,
+    ::ng-deep .mat-mdc-header-row {
+      height: 32px; 
+    }
+
+    ::ng-deep .mat-mdc-cell,
+    ::ng-deep .mat-mdc-header-cell {
+      padding: 2px 6px; 
+      font-size: 12px;  
+    }
   `]
 })
 export class AlumnoListComponent implements OnInit {
-  alumnos: Alumno[] = [];
+  dataSource = new MatTableDataSource<Alumno>([]);
   columnas: string[] = [
     'id','nombreCompleto','matricula','fechaNacimiento','edad',
     'estadoCivil','turno','carrera','activo','creadoEn','acciones'
@@ -153,15 +177,23 @@ export class AlumnoListComponent implements OnInit {
   turnoList = TURNOS;
   carreraList = CARRERAS;
 
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   constructor(private alumnoService: AlumnoService, private dialog: MatDialog) {}
 
   ngOnInit(): void {
     this.cargarAlumnos();
   }
 
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+  }
+
   cargarAlumnos(): void {
     this.alumnoService.getAlumnos().subscribe({
-      next: (data) => (this.alumnos = data.map(a => ({ ...a, editando: false }))),
+      next: (data) => {
+        this.dataSource.data = data.map(a => ({ ...a, editando: false }));
+      },
       error: (err) => console.error('Error cargando alumnos', err),
     });
   }
@@ -182,7 +214,7 @@ export class AlumnoListComponent implements OnInit {
     if (confirm('¿Seguro que deseas eliminar este alumno?')) {
       this.alumnoService.inactivar(id).subscribe({
         next: () => {
-          this.alumnos = this.alumnos.filter(a => a.id !== id);
+          this.dataSource.data = this.dataSource.data.filter(a => a.id !== id);
         },
         error: (err) => console.error('Error eliminando alumno', err),
       });
@@ -194,8 +226,8 @@ export class AlumnoListComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((nuevoAlumno: Alumno | null) => {
       if (nuevoAlumno) {
-        this.alumnos.push({ ...nuevoAlumno, editando: false });
-        this.alumnos = [...this.alumnos]; // refrescar tabla
+        const actual = this.dataSource.data;
+        this.dataSource.data = [...actual, { ...nuevoAlumno, editando: false }];
       }
     });
   }

@@ -98,7 +98,7 @@ export class AlumnoFormComponent implements OnInit {
 
     const formValues = this.alumnoForm.value;
 
-    // 🚀 Solo incluimos el id del alumno (si existe) + valores del formulario
+    //Incluimos el id del alumno (si existe) + valores del formulario
     const alumnoParaGuardar: Alumno = {
       id: this.data?.id, 
       ...formValues

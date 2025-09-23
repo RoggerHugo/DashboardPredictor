@@ -14,7 +14,6 @@ import { AuthService } from './services/auth.service';
       <header class="header">
         <h1>Clasificador de riesgo de abandono académico</h1>
         <img src="LogoTeschi.jpeg" alt="Logo del sistema" class="logo" />
-        
       </header>
     </div>
 
@@ -41,29 +40,30 @@ import { AuthService } from './services/auth.service';
   `,
   styles: [`
     .container { 
-      padding: 20px; 
+      padding: 10px; 
       display: flex; 
       flex-direction: column; 
       align-items: center; 
-      justify-content: center; 
-      min-height: 100vh;
+      justify-content: flex-start; 
+      min-height: calc(100vh - 120px);
     }
     .header {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
     .logo {
-      width: 400px;
-      margin-bottom: 20px;
+      width: 220px;
+      margin-bottom: 8px 0;
     }
     .login-box {
       border: 1px solid #ccc;
       border-radius: 8px;
-      padding: 20px;
+      padding: 16px;
       max-width: 320px;
       width: 100%;
       background: #fff;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-top: 10px;
     }
     input {
       margin-bottom: 10px;

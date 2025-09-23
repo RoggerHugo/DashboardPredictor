@@ -1,4 +1,3 @@
-// src/app/models/alumno.model.ts
 export interface Alumno {
   id: number;
   nombreCompleto: string;

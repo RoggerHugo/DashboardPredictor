@@ -10,7 +10,6 @@ import { MatIconModule } from '@angular/material/icon';
 import { ReporteService } from './reporte.service';
 import { Alumno } from '../../models/alumno.model';
 import { PrediccionService } from '../../services/prediccion.service';
-// 👇 PASO 1: Importa la interfaz 'ApiResponse'
 import { ApiResponse } from '../../models/prediccion.model';
 import { PrediccionDetailComponent } from '../prediccion/prediccion-detail.component';
 
@@ -269,11 +268,11 @@ export class ReporteComponent implements OnInit {
 
   verPrediccion(id: number) {
     this.prediccionService.getPrediccion(id).subscribe({
-      // 👇 PASO 2: La función ahora espera 'ApiResponse'
+      // La función espera 'ApiResponse'
       next: (response: ApiResponse) => {
         this.dialog.open(PrediccionDetailComponent, {
           width: '600px',
-          // 👇 PASO 3: Pasamos el objeto de respuesta COMPLETO al diálogo
+          // Pasamos el objeto de respuesta COMPLETO al diálogo
           data: response
         });
       },
