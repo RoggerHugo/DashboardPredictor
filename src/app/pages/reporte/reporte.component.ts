@@ -139,7 +139,7 @@ import { PrediccionDetailComponent } from '../prediccion/prediccion-detail.compo
 
     h2 {
       text-align: center;
-      color: #000000;
+      color: #0b5fff;
       margin-bottom: 1.5rem;
     }
 
