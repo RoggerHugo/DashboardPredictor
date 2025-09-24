@@ -5,9 +5,12 @@ import { Alumno } from '../models/alumno.model';
 
 @Injectable({ providedIn: 'root' })
 export class AlumnoService {
+  private isDev = typeof location !== 'undefined' && location.hostname === 'localhost';
+  private API_ORIGIN = this.isDev ? '' : 'https://dropoutpredictor.onrender.com';
+
   private http = inject(HttpClient);
-  private apiUrl = '/api/student';
-  
+  //private apiUrl = '/api/student';
+  private apiUrl = `${this.API_ORIGIN}/api/student`;
   // Obtener lista de alumnos
   getAlumnos(): Observable<Alumno[]> {
     return this.http.get<any>(this.apiUrl).pipe(

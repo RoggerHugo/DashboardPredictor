@@ -13,8 +13,12 @@ interface LoginResponse {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private isDev = typeof location !== 'undefined' && location.hostname === 'localhost';
+  private API_ORIGIN = this.isDev ? '' : 'https://dropoutpredictor.onrender.com'; 
+  private base  = `${this.API_ORIGIN}/auth`;
+
   private http = inject(HttpClient);
-  private base = '/auth';   
+  //private base = '/auth';   
 
 
   login(username: string, password: string): Observable<string> {

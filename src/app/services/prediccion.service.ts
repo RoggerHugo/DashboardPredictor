@@ -5,9 +5,11 @@ import { ApiResponse, StudentDetail, PredictionData } from '../models/prediccion
 
 @Injectable({ providedIn: 'root' })
 export class PrediccionService {
+  private isDev = typeof location !== 'undefined' && location.hostname === 'localhost';
+  private API_ORIGIN = this.isDev ? '' : 'https://dropoutpredictor.onrender.com';
   private http = inject(HttpClient);
-
-  private apiUrl = '/api/student'; 
+  private apiUrl = `${this.API_ORIGIN}/api/student`;
+  //private apiUrl = '/api/student'; 
   
   getPrediccion(id: number): Observable<ApiResponse> {
     const url = `${this.apiUrl}/${id}/detail`;

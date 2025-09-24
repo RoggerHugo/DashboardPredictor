@@ -6,7 +6,7 @@ import { Alumno } from '../../models/alumno.model';
 @Injectable({ providedIn: 'root' })
 export class ReporteService {
   private http = inject(HttpClient);
-  private apiUrl = '/api/student';
+  private apiUrl = '/api/student?page=3';
 
   getAlumnos(): Observable<Alumno[]> {
     return this.http.get<any>(this.apiUrl).pipe(
