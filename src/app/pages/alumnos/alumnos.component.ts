@@ -8,10 +8,9 @@ import { RouterModule } from '@angular/router';
   imports: [CommonModule, RouterModule],
   template: `
     <div class="alumnos-shell">
-      <header class="header">
+     <!-- <header class="header">
         <h2>Gestión de Alumnos</h2>
-      </header>
-
+      </header>-->
       <section class="content">
         <!-- aquí se renderizarán las rutas hijas:
              - '' -> alumno-list.component

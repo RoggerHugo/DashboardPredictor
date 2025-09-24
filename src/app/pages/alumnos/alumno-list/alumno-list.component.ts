@@ -7,6 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatDialog } from '@angular/material/dialog';
+import { Router, RouterModule } from '@angular/router';
 
 import { Alumno } from '../../../models/alumno.model';
 import { AlumnoService } from '../../../services/alumno.service';
@@ -24,8 +25,16 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
     MatButtonModule,
     MatIconModule,
     MatPaginatorModule,
+    RouterModule
   ],
   template: `
+    <div class="header-bar">
+      <h2>Gestión de Alumnos</h2>
+      <button mat-stroked-button color="primary" (click)="irHome()">
+        <mat-icon>home</mat-icon> Inicio
+      </button>
+    </div>
+
     <div class="acciones-superiores">
       <button mat-raised-button color="primary" (click)="abrirModalNuevo()">
         <mat-icon>add</mat-icon> Nuevo Alumno
@@ -73,11 +82,11 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
       </ng-container>
 
       <!-- Estado Civil -->
-      <ng-container matColumnDef="estadoCivil">
+      <ng-container matColumnDef="estadoCivilId">
         <th mat-header-cell *matHeaderCellDef>Estado Civil</th>
         <td mat-cell *matCellDef="let a">
-          <select [(ngModel)]="a.estadoCivil" [disabled]="!a.editando">
-            <option *ngFor="let e of estadoCivilList" [value]="e.nombre">
+          <select [(ngModel)]="a.estadoCivilId" [disabled]="!a.editando">
+            <option *ngFor="let e of estadoCivilList" [value]="e.id">
               {{ e.nombre }}
             </option>
           </select>
@@ -85,11 +94,11 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
       </ng-container>
 
       <!-- Turno -->
-      <ng-container matColumnDef="turno">
+      <ng-container matColumnDef="turnoId">
         <th mat-header-cell *matHeaderCellDef>Turno</th>
         <td mat-cell *matCellDef="let a">
-          <select [(ngModel)]="a.turno" [disabled]="!a.editando">
-            <option *ngFor="let t of turnoList" [value]="t.nombre">
+          <select [(ngModel)]="a.turnoId" [disabled]="!a.editando">
+            <option *ngFor="let t of turnoList" [value]="t.id">
               {{ t.nombre }}
             </option>
           </select>
@@ -97,11 +106,11 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
       </ng-container>
 
       <!-- Carrera -->
-      <ng-container matColumnDef="carrera">
+      <ng-container matColumnDef="carreraId">
         <th mat-header-cell *matHeaderCellDef>Carrera</th>
         <td mat-cell *matCellDef="let a">
-          <select [(ngModel)]="a.carrera" [disabled]="!a.editando">
-            <option *ngFor="let c of carreraList" [value]="c.nombre">
+          <select [(ngModel)]="a.carreraId" [disabled]="!a.editando">
+            <option *ngFor="let c of carreraList" [value]="c.id">
               {{ c.nombre }}
             </option>
           </select>
@@ -149,11 +158,13 @@ import { ESTADO_CIVIL, TURNOS, CARRERAS } from '../../../data/masters';
   styles: [`
     .full-width { width: 100%; margin-top: 16px; }
     .acciones-superiores { display: flex; justify-content: flex-end; margin-bottom: 12px; }
+    .header-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom: 16px; }
+    .h2 {text-align: center; color: #0b5fff}
     input, select { width: 100%; border: none; background: transparent; font-size: 13px; }
     input[readonly], select[disabled] { color: #444; background: transparent; }
     input:focus, select:focus { outline: 1px solid #1976d2; background: #eef6ff; }
 
-    /* Estilos */
+    /* Estilos compactos */
     ::ng-deep .mat-mdc-row,
     ::ng-deep .mat-mdc-header-row {
       height: 32px; 
@@ -170,7 +181,7 @@ export class AlumnoListComponent implements OnInit {
   dataSource = new MatTableDataSource<Alumno>([]);
   columnas: string[] = [
     'id','nombreCompleto','matricula','fechaNacimiento','edad',
-    'estadoCivil','turno','carrera','activo','creadoEn','acciones'
+    'estadoCivilId','turnoId','carreraId','activo','creadoEn','acciones'
   ];
 
   estadoCivilList = ESTADO_CIVIL;
@@ -179,7 +190,11 @@ export class AlumnoListComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(private alumnoService: AlumnoService, private dialog: MatDialog) {}
+  constructor(
+    private alumnoService: AlumnoService,
+    private dialog: MatDialog,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.cargarAlumnos();
@@ -230,5 +245,9 @@ export class AlumnoListComponent implements OnInit {
         this.dataSource.data = [...actual, { ...nuevoAlumno, editando: false }];
       }
     });
+  }
+
+  irHome(): void {
+    this.router.navigate(['/home']); // 👈 Ahora va al menú principal
   }
 }

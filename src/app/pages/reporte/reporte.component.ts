@@ -6,6 +6,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
+import { Router, RouterModule } from '@angular/router';
 
 import { ReporteService } from './reporte.service';
 import { Alumno } from '../../models/alumno.model';
@@ -27,8 +28,12 @@ import { PrediccionDetailComponent } from '../prediccion/prediccion-detail.compo
   ],
   template: `
     <div class="reporte-container">
-      <h2>Reporte de Alumnos con Riesgo de Abandono</h2>
-
+      <div class="header-bar">
+        <h2>Reporte de Alumnos con Riesgo de Abandono</h2>
+        <button mat-stroked-button color="primary" (click)="irHome()">
+          <mat-icon>home</mat-icon> Inicio
+        </button>
+      </div>
       <!-- Barra de búsqueda -->
       <div class="search-bar">
         <mat-icon>search</mat-icon>
@@ -126,9 +131,15 @@ import { PrediccionDetailComponent } from '../prediccion/prediccion-detail.compo
       font-family: Arial, sans-serif;
     }
 
+    .header-bar { 
+      display:flex; 
+      align-items:center; 
+      justify-content:space-between; 
+      margin-bottom: 16px; }
+
     h2 {
       text-align: center;
-      color: #0b5fff;
+      color: #000000;
       margin-bottom: 1.5rem;
     }
 
@@ -212,7 +223,8 @@ export class ReporteComponent implements OnInit {
   constructor(
     private reporteService: ReporteService,
     private prediccionService: PrediccionService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -281,5 +293,9 @@ export class ReporteComponent implements OnInit {
         alert('Error al obtener detalle de la predicción.');
       }
     });
+  }
+
+    irHome(): void {
+    this.router.navigate(['/home']); // 👈 Ahora va al menú principal
   }
 }
